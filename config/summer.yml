@@ -1,0 +1,4 @@
+use_ssl: true
+nick: homebus-bot
+channel: '#ctrlhdoor'
+auto_rejoin: true
