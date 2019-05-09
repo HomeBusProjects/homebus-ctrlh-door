@@ -35,13 +35,27 @@ class DoorHomeBusApp < HomeBusApp
   def irc_message(sender, channel, message)
     puts "got a message #{message}"
 
+    # May 9 11:51:09 Isaac P. has opened unit2 front door
+    m = message.match /(\S+ \S\.) has (\S+) (unit\d) (\S+ door)/
+    if m && m[1] && m[2] && m[3] && m[4]
+      obj = { id: @uuid,
+              timestamp: Time.now.to_i,
+              person: m[1],
+              action: m[2],
+              unit: m[3],
+              door: m[4]
+            }
+    else
+      obj = { id: @uuid,
+              timestamp: Time.now.to_i,
+              message: message
+            }
+    end
+
     # messages look like "FIRSTNAME INITIAL. has opened unit3 back door"
     # parse them into "(PERSON) has (VERBED) (DOOR)"
     # may also look like "unit3 access control is online"
-    @mqtt.publish "/door", JSON.generate({ uuid: @uuid,
-                             timestamp: Time.now.to_i,
-                             person: message
-                           })
+    @mqtt.publish "/door", JSON.generate(obj)
   end
 
   def manufacturer
