@@ -38,12 +38,10 @@ class DoorHomeBusApp < HomeBusApp
     # messages look like "FIRSTNAME INITIAL. has opened unit3 back door"
     # parse them into "(PERSON) has (VERBED) (DOOR)"
     # may also look like "unit3 access control is online"
-    timestamp = Time.now
-
-    @mqtt.publish "/door", { uuid: @uuid,
-                             timestamp: timestamp,
+    @mqtt.publish "/door", JSON.generate({ uuid: @uuid,
+                             timestamp: Time.now.to_i,
                              person: message
-                           }
+                           })
   end
 
   def manufacturer
