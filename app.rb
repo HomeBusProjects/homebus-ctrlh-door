@@ -38,7 +38,6 @@ class DoorHomeBusApp < HomeBusApp
     obj = {}
 
     # May 9 11:51:09 Isaac P. has opened unit2 front door
-    m = message.match 
     obj = case message
     when /(\S+ \S\.) has (\S+) (unit\d) (\S+ door)/
       { id: @uuid,
