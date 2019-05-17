@@ -35,16 +35,35 @@ class DoorHomeBusApp < HomeBusApp
   def irc_message(sender, channel, message)
     puts "got a message #{message}"
 
+    obj = {}
+
     # May 9 11:51:09 Isaac P. has opened unit2 front door
-    m = message.match /(\S+ \S\.) has (\S+) (unit\d) (\S+ door)/
-    if m && m[1] && m[2] && m[3] && m[4]
-      obj = { id: @uuid,
-              timestamp: Time.now.to_i,
-              person: m[1],
-              action: m[2],
-              unit: m[3],
-              door: m[4]
-            }
+    m = message.match 
+    obj = case message
+    when /(\S+ \S\.) has (\S+) (unit\d) (\S+ door)/
+      { id: @uuid,
+        timestamp: Time.now.to_i,
+        person: $1,
+        action: $2,
+        unit: $3,
+        door: $4
+      }
+    when /(\S+ \S\.) has (\S+) (front craft lab)/
+      { id: @uuid,
+        timestamp: Time.now.to_i,
+        person: $1,
+        action: $2,
+        unit: 'unit3',
+        door: $3
+      }
+    when /(front craft lab) (\S+) by (\S+ \S\.)/
+      { id: @uuid,
+        timestamp: Time.now.to_i,
+        person: $3,
+        action: $2,
+        unit: 'unit3',
+        door: $1
+      }
     else
       obj = { id: @uuid,
               timestamp: Time.now.to_i,
