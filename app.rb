@@ -63,6 +63,15 @@ class DoorHomeBusApp < HomeBusApp
         unit: 'unit3',
         door: $1
       }
+    # "May 16 21:35:39 unit2 front door locked by John R."
+    when /(unit\d) (\S+ door) (\S+) by (\S+ \S\.)/
+      { id: @uuid,
+        timestamp: Time.now.to_i,
+        person: $4,
+        action: $3,
+        unit: $1,
+        door: $2
+      }
     else
       obj = { id: @uuid,
               timestamp: Time.now.to_i,
