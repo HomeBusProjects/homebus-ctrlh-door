@@ -42,47 +42,57 @@ class DoorHomeBusApp < HomeBusApp
     when /(\S+ \S\.) has (\S+) (unit\d) (\S+ door)/
       { id: @uuid,
         timestamp: Time.now.to_i,
-        person: $1,
-        action: $2,
-        unit: $3,
-        door: $4
+        access: {
+          person: $1,
+          action: $2,
+          unit: $3,
+          door: $4
+        }
       }
     when /(\S+ \S\.) has (\S+) (front craft lab)/
       { id: @uuid,
         timestamp: Time.now.to_i,
-        person: $1,
-        action: $2,
-        unit: 'unit3',
-        door: $3
+        access: {
+          person: $1,
+          action: $2,
+          unit: 'unit3',
+          door: $3
+        }
       }
     when /(front craft lab) (\S+) by (\S+ \S\.)/
       { id: @uuid,
         timestamp: Time.now.to_i,
-        person: $3,
-        action: $2,
-        unit: 'unit3',
-        door: $1
+        access: {
+          person: $3,
+          action: $2,
+          unit: 'unit3',
+          door: $1
+        }
       }
     # "May 16 21:35:39 unit2 front door locked by John R."
     when /(unit\d) (\S+ door) (\S+) by (\S+ \S\.)/
       { id: @uuid,
         timestamp: Time.now.to_i,
-        person: $4,
-        action: $3,
-        unit: $1,
-        door: $2
+        access: {
+          person: $4,
+          action: $3,
+          unit: $1,
+          door: $2
+        }
       }
     else
       obj = { id: @uuid,
               timestamp: Time.now.to_i,
-              message: message
+              access: {
+                message: message
+              }
             }
     end
 
     # messages look like "FIRSTNAME INITIAL. has opened unit3 back door"
     # parse them into "(PERSON) has (VERBED) (DOOR)"
     # may also look like "unit3 access control is online"
-    @mqtt.publish "/door", JSON.generate(obj)
+    @mqtt.publish "/door", JSON.generate(obj), true
   end
 
   def manufacturer
